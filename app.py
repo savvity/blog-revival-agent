@@ -561,6 +561,13 @@ st.markdown("""
 
 
 # ---------------------------------------------------------------------------
+# Session state
+# ---------------------------------------------------------------------------
+
+if "results" not in st.session_state:
+    st.session_state["results"] = []
+
+# ---------------------------------------------------------------------------
 # Input form
 # ---------------------------------------------------------------------------
 
@@ -607,6 +614,7 @@ with st.form("revival_form"):
 # ---------------------------------------------------------------------------
 
 if submitted:
+    st.session_state["results"] = []  # Clear previous results on new run
     errors = []
     if not domain.strip():
         errors.append("Please enter your website domain.")
@@ -795,8 +803,16 @@ if submitted:
 
     progress_bar.progress(1.0, text="All posts processed.")
     _render_cost()
+    st.session_state["results"] = results
 
-    # ── Step 3: Results ──────────────────────────────────────────────────
+
+# ---------------------------------------------------------------------------
+# Step 3: Results (rendered from session state so downloads don't reset view)
+# ---------------------------------------------------------------------------
+
+if st.session_state.get("results"):
+    results = st.session_state["results"]
+
     st.markdown("""
     <div class="step-header">
       <span class="step-num">03</span>
